@@ -1,27 +1,19 @@
-require('dotenv').config();
+require(`dotenv`).config()
 
 const path = require(`path`)
 
 const config = require(`./src/utils/siteConfig`)
 const generateRSSFeed = require(`./src/utils/rss/generate-feed`)
 
-let ghostConfig
+const ghostConfig = {
+    apiUrl: process.env.GHOST_API_URL,
+    contentApiKey: process.env.GHOST_CONTENT_API_KEY,
+}
 
-try {
-    ghostConfig = require(`./.ghost`)
-} catch (e) {
-    ghostConfig = {
-        production: {
-            apiUrl: process.env.GHOST_API_URL,
-            contentApiKey: process.env.GHOST_CONTENT_API_KEY,
-        },
-    }
-} finally {
-    const { apiUrl, contentApiKey } = process.env.NODE_ENV === `development` ? ghostConfig.development : ghostConfig.production
+const { apiUrl, contentApiKey } = ghostConfig
 
-    if (!apiUrl || !contentApiKey || contentApiKey.match(/<key>/)) {
-        throw new Error(`GHOST_API_URL and GHOST_CONTENT_API_KEY are required to build. Check the README.`) // eslint-disable-line
-    }
+if (!apiUrl || !contentApiKey || contentApiKey.match(/<key>/)) {
+    throw new Error(`GHOST_API_URL and GHOST_CONTENT_API_KEY are required to build. Check the README.`) // eslint-disable-line
 }
 
 if (process.env.NODE_ENV === `production` && config.siteUrl === `http://localhost:8000` && !process.env.SITEURL) {
