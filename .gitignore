@@ -60,6 +60,7 @@ typings/
 .env
 .env.development
 .env.production
+.node-version
 
 # IDE
 .idea/*
